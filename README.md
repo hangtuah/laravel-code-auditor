@@ -2,7 +2,7 @@
 
 **Don't just detect dead code. Discover how it became dead.**
 
-An **Alpha release** Laravel development package that lists potentially unused methods in `app/` and, when evidence exists, shows the commit where their last detected reference disappeared.
+This **Alpha release** helps Laravel developers find potentially unused methods in `app/`. When Git evidence is available, it shows the commit where a method's last detected reference disappeared.
 
 ## Features
 
@@ -13,11 +13,26 @@ An **Alpha release** Laravel development package that lists potentially unused m
 
 ## Requirements
 
-- PHP 8.4 or newer within the declared `^8.4` constraint.
-- Laravel 13.43 or newer within the declared `^13.43` component constraints.
-- Git executable available to the PHP process for history analysis.
+- PHP 8.4 (`^8.4`, meaning 8.4 through 8.x).
+- Laravel 13.43 or later in the 13.x series, based on the declared `illuminate/*` constraints (`^13.43`).
+- Composer 2 to install the package. Validation used Composer 2.9.5.
+- Git available to the PHP process for commit and diff analysis.
+- A local Laravel development environment (`APP_ENV=local`). The dashboard returns 404 in other environments.
 
-Verified with PHP 8.4.28 and Laravel 13.43.0 and 13.44.1. Other versions within the constraints have not been tested.
+## Compatibility
+
+The declared constraints allow PHP `>=8.4 <9.0` and Illuminate components `>=13.43 <14.0`. Only these combinations have been tested:
+
+| PHP | Laravel | Status |
+| --- | --- | --- |
+| 8.4.28 | 13.43.0 | Tested |
+| 8.4.28 | 13.44.1 | Tested |
+| 8.4.28 | Other 13.43+ versions in 13.x | Allowed by constraints; untested |
+| Other 8.4–8.x versions | 13.43+ in 13.x | Allowed by constraints; untested |
+| Below 8.4 | Any | Outside declared constraints; unsupported |
+| Any | Below 13.43 or 14.x+ | Outside declared constraints; unsupported |
+
+The table describes Composer constraints and actual validation, not a guarantee for untested versions.
 
 ## Architecture decisions
 
@@ -25,35 +40,27 @@ Verified with PHP 8.4.28 and Laravel 13.43.0 and 13.44.1. Other versions within 
 - [ADR-002: Dead code origin analysis](docs/adr/ADR-002-dead-code-origin-analysis.md)
 - [ADR-003: Security and distribution](docs/adr/ADR-003-security-and-distribution.md)
 
-## Install from GitHub
+## Installation
 
-After the repository becomes public, add this HTTPS VCS repository to the Laravel application's `composer.json`:
-
-```json
-"repositories": [
-  {"type": "vcs", "url": "https://github.com/hangtuah/laravel-code-auditor.git"}
-]
-```
-
-Then run:
+Run these commands from your Laravel project root:
 
 ```bash
+composer config repositories.code-auditor vcs https://github.com/hangtuah/laravel-code-auditor.git
 composer require --dev hangtuah/laravel-code-auditor:v0.1.0-alpha.2
-php artisan package:discover
-php artisan route:clear
 ```
 
-Laravel discovers the service provider automatically. Keep the package in `require-dev` so production installs with `--no-dev` omit it.
+Composer installs directly from GitHub; Packagist is not required. While the repository is private, installation requires GitHub access. Laravel discovers the service provider automatically. The `--dev` flag keeps the package in `require-dev`.
 
-## Local use
+## Quick Start
 
-Set `APP_ENV=local`, then start the application bound to the loopback interface:
+From your Laravel project root, set `APP_ENV=local` in your local `.env` file, then run:
 
 ```bash
+php artisan route:clear
 php artisan serve --host=127.0.0.1
 ```
 
-Open `http://127.0.0.1:8000/code-audit`. The route returns 404 when `APP_ENV` is not `local`.
+Open [http://127.0.0.1:8000/code-audit](http://127.0.0.1:8000/code-audit). The page shows findings and any available origin investigations.
 
 ## Security and privacy
 
@@ -65,17 +72,16 @@ This package is intended for local development only. A local environment exposed
 
 Findings are **potentially unused code**, not proof that methods are safe to remove. Reference matching is name-based. Dynamic invocation, reflection, framework conventions, and same-named methods can cause false results. Origin analysis compares only `HEAD` and its first parent, and requires the method in both snapshots plus a removed reference line. Uncommitted changes are not treated as committed historical evidence. Git evidence cannot prove developer intentions. If evidence is insufficient, the dashboard reports **Origin not established**.
 
-## Uninstall
+## Uninstallation
+
+Run from your Laravel project root:
 
 ```bash
 composer remove --dev hangtuah/laravel-code-auditor
+composer config --unset repositories.code-auditor
 php artisan route:clear
 ```
 
-Remove the VCS repository entry from the application's `composer.json` if no longer needed.
+## License
 
-## Release
-
-Release target: `v0.1.0-alpha.2` (Alpha). Licensed under the [MIT License](LICENSE), Copyright (c) 2026 Mohd Fairus. Distribution is through GitHub VCS; the package is not published to Packagist. The repository remains private until the owner confirms publication rights and changes its visibility.
-
-Release validation used a separate Laravel installation and the synthetic Git check in `tests/StandaloneOriginCheck.php`. The original Laravel application's suite had 27 passing tests and one intentionally skipped `HealthCheckTest` lab exercise; that skipped host test does not exercise this package.
+[MIT License](LICENSE), Copyright (c) 2026 Mohd Fairus.
