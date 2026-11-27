@@ -2,7 +2,7 @@
 
 **Don't just detect dead code. Discover how it became dead.**
 
-This **Alpha release** helps Laravel developers find potentially unused methods in `app/`. When Git evidence is available, it shows the commit where a method's last detected reference disappeared.
+Laravel Code Auditor helps developers find potentially unused methods in `app/`. When Git evidence is available, it shows the commit where a method's last detected reference disappeared.
 
 ## Features
 
@@ -13,26 +13,28 @@ This **Alpha release** helps Laravel developers find potentially unused methods 
 
 ## Requirements
 
-- PHP 8.4 (`^8.4`, meaning 8.4 through 8.x).
-- Laravel 13.43 or later in the 13.x series, based on the declared `illuminate/*` constraints (`^13.43`).
+- PHP 8.2 or later within the declared `^8.2` range.
+- Laravel 12.x or 13.x, based on the declared `illuminate/*` constraints (`^12.0 || ^13.0`).
 - Composer 2 to install the package. Validation used Composer 2.9.5.
 - Git available to the PHP process for commit and diff analysis.
 - A local Laravel development environment (`APP_ENV=local`). The dashboard returns 404 in other environments.
 
 ## Compatibility
 
-The declared constraints allow PHP `>=8.4 <9.0` and Illuminate components `>=13.43 <14.0`. Only these combinations have been tested:
+The package declares PHP `>=8.2 <9.0`, Illuminate components `>=12.0 <14.0`, and Symfony Process `^7.2 || ^8.0`. The following combinations were tested in isolated Laravel applications:
 
-| PHP | Laravel | Status |
-| --- | --- | --- |
-| 8.4.28 | 13.43.0 | Tested |
-| 8.4.28 | 13.44.1 | Tested |
-| 8.4.28 | Other 13.43+ versions in 13.x | Allowed by constraints; untested |
-| Other 8.4–8.x versions | 13.43+ in 13.x | Allowed by constraints; untested |
-| Below 8.4 | Any | Outside declared constraints; unsupported |
-| Any | Below 13.43 or 14.x+ | Outside declared constraints; unsupported |
+| PHP | Laravel | Symfony Process | Result |
+| --- | --- | --- | --- |
+| 8.2.36 | 12.74.0 | 7.4.24 | Tested |
+| 8.3.36 | 12.74.0 | 7.4.24 | Tested |
+| 8.4.28 | 12.74.0 | 7.4.24 | Tested |
+| 8.4.28 | 13.44.1 | 8.1.12 | Tested |
+| 8.3.36 | 12.31.1 | 7.3.3 | Installation blocked by Composer security advisories; untested |
+| Other versions within declared constraints | — | — | Untested |
 
-The table describes Composer constraints and actual validation, not a guarantee for untested versions.
+The reported Laravel 12.31.1 / Symfony Process 7.3.3 combination could not be tested because Composer blocks those pinned versions for security advisories. This does not establish a package incompatibility. Declared constraints do not guarantee that every version can be installed safely.
+
+Composer reported Laravel 12.31.1 advisories `PKSA-yxbx-3c9s-cjt9`, `PKSA-b41t-wbzk-9q51`, `PKSA-d5tc-s1qs-h781`, `PKSA-m5cs-t1y6-qpcs`, `PKSA-3r5d-mb8f-1qw9`, and `PKSA-mdq4-51ck-6kdq`. It reported Symfony Process 7.3.3 advisory `PKSA-rkkf-636k-qjb3`.
 
 ## Architecture decisions
 
@@ -42,14 +44,29 @@ The table describes Composer constraints and actual validation, not a guarantee 
 
 ## Installation
 
-Run these commands from your Laravel project root:
+For `v0.1.0`, run these commands from your Laravel project root:
 
 ```bash
-composer config repositories.code-auditor vcs https://github.com/hangtuah/laravel-code-auditor.git
-composer require --dev hangtuah/laravel-code-auditor:v0.1.0-alpha.2
+composer config repositories.audit vcs https://github.com/hangtuah/laravel-code-auditor.git
+composer require --dev hangtuah/code-auditor
+php artisan route:clear
 ```
 
 Composer installs directly from GitHub; Packagist is not required. While the repository is private, installation requires GitHub access. Laravel discovers the service provider automatically. The `--dev` flag keeps the package in `require-dev`.
+
+### Migrating from the previous package name
+
+Run from your Laravel project root if you installed `hangtuah/laravel-code-auditor`:
+
+```bash
+composer remove --dev hangtuah/laravel-code-auditor
+composer config --unset repositories.code-auditor
+composer config repositories.audit vcs https://github.com/hangtuah/laravel-code-auditor.git
+composer require --dev hangtuah/code-auditor
+php artisan route:clear
+```
+
+The repository URL, PHP namespace, and `/code-audit` route are unchanged.
 
 ## Quick Start
 
@@ -77,8 +94,8 @@ Findings are **potentially unused code**, not proof that methods are safe to rem
 Run from your Laravel project root:
 
 ```bash
-composer remove --dev hangtuah/laravel-code-auditor
-composer config --unset repositories.code-auditor
+composer remove --dev hangtuah/code-auditor
+composer config --unset repositories.audit
 php artisan route:clear
 ```
 

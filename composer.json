@@ -1,14 +1,14 @@
 {
-    "name": "hangtuah/laravel-code-auditor",
+    "name": "hangtuah/code-auditor",
     "description": "Local Laravel audit of potentially unused methods and their Git origin",
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "^8.4",
-        "illuminate/support": "^13.43",
-        "illuminate/routing": "^13.43",
-        "illuminate/view": "^13.43",
-        "symfony/process": "^8.0"
+        "php": "^8.2",
+        "illuminate/support": "^12.0 || ^13.0",
+        "illuminate/routing": "^12.0 || ^13.0",
+        "illuminate/view": "^12.0 || ^13.0",
+        "symfony/process": "^7.2 || ^8.0"
     },
     "autoload": {"psr-4": {"LaravelCodeAuditor\\": "src/"}},
     "extra": {"laravel": {"providers": ["LaravelCodeAuditor\\CodeAuditorServiceProvider"]}}

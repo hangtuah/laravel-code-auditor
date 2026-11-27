@@ -65,7 +65,7 @@ class OriginAnalyzer
         $sources = [];
         foreach (explode("\0", $listing) as $path) {
             if (! str_ends_with($path, '.php') ||
-                ! array_any(self::DIRECTORIES, fn ($prefix) => str_starts_with($path, $prefix)) ||
+                ! array_filter(self::DIRECTORIES, fn ($prefix) => str_starts_with($path, $prefix)) ||
                 str_contains($path, '/generated/')) {
                 continue;
             }
