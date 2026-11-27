@@ -2,7 +2,7 @@
 
 **Don't just detect dead code. Discover how it became dead.**
 
-An internal Laravel development package that lists potentially unused methods in `app/` and, when evidence exists, shows the commit where their last detected reference disappeared.
+An **Alpha release** Laravel development package that lists potentially unused methods in `app/` and, when evidence exists, shows the commit where their last detected reference disappeared.
 
 ## Features
 
@@ -25,20 +25,20 @@ Verified with PHP 8.4.28 and Laravel 13.43.0 and 13.44.1. Other versions within 
 - [ADR-002: Dead code origin analysis](docs/adr/ADR-002-dead-code-origin-analysis.md)
 - [ADR-003: Security and distribution](docs/adr/ADR-003-security-and-distribution.md)
 
-## Install from a private GitHub repository
+## Install from GitHub
 
-Configure access to the private repository through your normal Composer/Git credentials. In the Laravel application's `composer.json`, add:
+After the repository becomes public, add this HTTPS VCS repository to the Laravel application's `composer.json`:
 
 ```json
 "repositories": [
-  {"type": "vcs", "url": "git@github.com:hangtuah/laravel-code-auditor.git"}
+  {"type": "vcs", "url": "https://github.com/hangtuah/laravel-code-auditor.git"}
 ]
 ```
 
 Then run:
 
 ```bash
-composer require --dev hangtuah/laravel-code-auditor:v0.1.0-alpha.1
+composer require --dev hangtuah/laravel-code-auditor:v0.1.0-alpha.2
 php artisan package:discover
 php artisan route:clear
 ```
@@ -76,6 +76,6 @@ Remove the VCS repository entry from the application's `composer.json` if no lon
 
 ## Release
 
-Release target: `v0.1.0-alpha.1`. This repository has no license selected and is intended for private internal distribution. Do not publish it to Packagist.
+Release target: `v0.1.0-alpha.2` (Alpha). Licensed under the [MIT License](LICENSE), Copyright (c) 2026 Mohd Fairus. Distribution is through GitHub VCS; the package is not published to Packagist. The repository remains private until the owner confirms publication rights and changes its visibility.
 
 Release validation used a separate Laravel installation and the synthetic Git check in `tests/StandaloneOriginCheck.php`. The original Laravel application's suite had 27 passing tests and one intentionally skipped `HealthCheckTest` lab exercise; that skipped host test does not exercise this package.

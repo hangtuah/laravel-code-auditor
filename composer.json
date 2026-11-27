@@ -2,6 +2,7 @@
     "name": "hangtuah/laravel-code-auditor",
     "description": "Local Laravel audit of potentially unused methods and their Git origin",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": "^8.4",
         "illuminate/support": "^13.43",
